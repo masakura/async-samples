@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/default.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  </head>
+  <body>
+    <section class="content">
+      <artcicle id="article-sync">
+        <h3>同期</h3>
+        <p>
+          <button id="sync" type="button" class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function random() {
+  const value = Math.random(); // 0 以上 1 未満の乱数を取得
+  const result = value > 0.1; // 90% の確立で true にする
+
+  console.log(`${value} is greater than 0.1? ${result}`);
+
+  return result;
+}
+
+function start() {
+  console.log('START!');
+
+  // false が出るまでひたすら乱数を生成し続ける
+  while (true) {
+    var result = random();
+    if (!result) {
+      break;
+    }
+  }
+
+  console.log('FINISH!');
+}</code></pre>
+        <p>
+          乱数の発生を一秒待ってとかがやりにくい。
+        </p>
+      </article>
+
+      <article id="article-callback">
+        <h3>コールバック (一秒待つ)</h3>
+        <p>
+          <button id="callback" type="button" class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function random(callback) {
+  // 一秒後にコールバックする
+  setTimeout(() => {
+    const value = Math.random(); // 0 以上 1 未満の乱数を取得
+    const result = value > 0.1; // 90% の確立で true にする
+
+    console.log(`${value} is greater than 0.1? ${result}`);
+
+    callback(result)
+  }, 1000);
+}
+
+// false が出るまでひたすら乱数を生成し続ける
+// 再帰関数
+function until(callback) {
+  random(result => {
+    if (result) {
+      until(callback);
+    } else {
+      callback();
+    }
+  });
+}
+
+function start() {
+  console.log('START!');
+
+  until(() => console.log('FINISH!'));
+
+  console.log('-----');
+}</code></pre>
+        <p>
+          再帰関数は読みにくい。プログラマーならばこういう再帰関数くらいは書けないとまずいんですが、それでもしんどい。
+        </p>
+      </article>
+
+      <article id="article-promise">
+        <h3>ES6 Promise (一秒待つ)</h3>
+        <p>
+          <button id="promise" type="button" class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function random() {
+  return new Promise(resolve => {
+    // 一秒後にコールバックする
+    setTimeout(() => {
+      const value = Math.random(); // 0 以上 1 未満の乱数を取得
+      const result = value > 0.1; // 90% の確立で true にする
+
+      console.log(`${value} is greater than 0.1? ${result}`);
+
+      resolve(result);
+    }, 1000);
+  });
+}
+
+// false が出るまでひたすら乱数を生成し続ける
+// 再帰関数
+function until() {
+  return random().then(result => {
+    if (result) {
+      return until();
+    }
+  });
+}
+
+function start() {
+  console.log('START!');
+
+  until().then(() => console.log('FINISH!'));
+
+  console.log('-----');
+}</code></pre>
+        <p>
+          一般的に、コールバックより ES6 Promise の方が可読性が向上するけど、この例ではほとんど差がない。
+        </p>
+      </article>
+
+      <article id="article-async">
+        <h3>ES2017 予定 async (一秒待つ)</h3>
+        <p>
+          <button id="async" type="button" class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function random() { // ES6 Promise 版と同じ!
+  return new Promise(resolve => {
+    // 一秒後にコールバックする
+    setTimeout(() => {
+      const value = Math.random(); // 0 以上 1 未満の乱数を取得
+      const result = value > 0.1; // 90% の確立で true にする
+
+      console.log(`${value} is greater than 0.1? ${result}`);
+
+      resolve(result);
+    }, 1000);
+  });
+}
+
+async function start() {
+  console.log('START!');
+
+  // false が出るまでひたすら乱数を生成し続ける
+  while (true) {
+    var result = await random();
+    if (!result) {
+      break;
+    }
+  }
+
+  console.log('FINISH');
+}</code></pre>
+        <p>
+          呼び出す側の書き方は同期版にかなり近い! 読みやすい!
+        </p>
+        <p>
+          分岐や回数の分からないループがたくさんあればあるほど効果を発揮します。
+        </p>
+      </article>
+
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="sync.js"></script>
+    <script src="callback.js"></script>
+    <script src="promise.js"></script>
+    <script src="async.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
