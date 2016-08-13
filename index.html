@@ -36,6 +36,7 @@
         </p>
       </article>
     </section>
+
     <section class="content block">
       <h2>同期から非同期へ</h2>
       <article id="article-sync">
@@ -191,7 +192,138 @@ async function start() {
           分岐や回数の分からないループがたくさんあればあるほど効果を発揮します。
         </p>
       </article>
+    </section>
 
+    <section class="content block">
+      <h2>例外のスロー</h2>
+      <article>
+        <h3>同期</h3>
+        <p>
+          <button id="throw-sync" type="button"  class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">unction throwError() {
+  // エラーをスローする
+  throw new Error('Throw Error');
+}
+
+function catchError() {
+  try {
+    throwError();
+  } catch (error) {
+    // エラーをキャッチして表示する
+    console.log(`Catch [${error}].`);
+  }
+}</code></pre>
+        <p>
+          異常時の例外処理はこんな感じで簡単に書ける。
+        </p>
+      </article>
+
+      <article>
+        <h3>コールバック (失敗例)</h3>
+        <p>
+          <button id="throw-callback" type="button"  class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function throwError(callback) {
+  // 非同期で一秒後にエラーをスローする
+  setTimeout(() => {
+    throw new Error('Throw Error');
+  }, 1000);
+}
+
+  function catchError() {
+  try {
+    throwError();
+  } catch (error) {
+    // エラーをキャッチして表示する
+    console.log(`Catch [${error}].`);
+  }
+}</code></pre>
+        <p>
+          非同期の例外はキャッチしづらい。(キャッチできていないので、<code>Uncaught Error</code> が表示される)
+        </p>
+      </article>
+
+      <article>
+        <h3>コールバック</h3>
+        <p>
+          <button id="throw-callback2" type="button"  class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function throwError(callback) {
+  // 非同期で一秒後にエラーをスローする
+  setTimeout(() => {
+    callback(new Error('Throw Error'));
+  }, 1000);
+}
+
+function catchError() {
+  throwError(error => {
+    // コールバックに渡されたエラーを見てエラーを出力する
+    if (error) {
+      console.log(`Catch [${error}].`);
+    }
+  });
+}</code></pre>
+        <p>
+          コールバックの場合は、コールバック関数の第一引数にエラーオブジェクトを渡すのがセオリー。(Node.js の文化?)
+        </p>
+        <p>
+          同期から非同期コールバックに変わるだけでここまで大きくコードが変わるのはすごく大変なこと。
+        </p>
+      </article>
+
+      <article>
+        <h3>ES6 Promise</h3>
+        <p>
+          <button id="throw-promise" type="button"  class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function throwError() {
+  return new Promise((resolve, reject) => {
+    // 非同期で一秒後にエラーをスローする
+    setTimeout(() => {
+      reject(new Error('Throw Error'));
+    }, 1000);
+  });
+}
+
+function catchError() {
+  throwError()
+    .catch(error => {
+      // エラーをキャッチして表示する
+      console.log(`Catch [${error}].`);
+    });
+}</code></pre>
+        <p>
+          <code>ES6 Promise</code> の場合は <code>catch</code> 関数が使える分まだ分かりやすい。
+        </p>
+      </article>
+
+      <article>
+        <h3>ES2017 予定 async</h3>
+        <p>
+          <button id="throw-async" type="button"  class="btn btn-default">実行</button>
+        </p>
+        <pre><code class="javascript">function throwError() {
+  return new Promise((resolve, reject) => {
+    // 非同期で一秒後にエラーをスローする
+    setTimeout(() => {
+      reject(new Error('Throw Error'));
+    }, 1000);
+  });
+}
+
+async function catchError() {
+  try {
+    await throwError();
+  } catch (error) {
+    // エラーをキャッチして表示する
+    console.log(`Catch [${error}].`);
+  }
+}</code></pre>
+        <p>
+          呼び出す側の書き方は同期版にかなり近い! 読みやすい!
+        </p>
+      </article>
     </section>
 
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -202,6 +334,11 @@ async function start() {
     <script src="callback.js"></script>
     <script src="promise.js"></script>
     <script src="async.js"></script>
+    <script src="throw-sync.js"></script>
+    <script src="throw-callback.js"></script>
+    <script src="throw-callback2.js"></script>
+    <script src="throw-promise.js"></script>
+    <script src="throw-async.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
     <script>
