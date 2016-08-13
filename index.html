@@ -326,6 +326,99 @@ async function catchError() {
       </article>
     </section>
 
+    <section>
+      <h2>補足</h2>
+      <article>
+        <p>
+          こういう感じで同期呼び出しをしているとする。
+        </p>
+        <pre>
++---------+     +---------+     +---------+     +---------+
+| func1   |     | func2   |     | func3   |     | func4   |
+|  (sync) | --> |  (sync) | --> |  (sync) | --> |  (sync) |
++---------+     +---------+     +---------+     +---------+</pre>
+        <p>
+          <code>func4</code> が非同期関数に変更されたとする。(コールバックか <code>ES6 Promise</code> かは問わない)
+        </p>
+        <pre>
++---------+     +---------+     +---------+     +---------+
+| func1   |     | func2   |     | func3   |     | *func4   |
+|  (sync) | --> |  (sync) | --> |  (sync) | --> | (async) |
++---------+     +---------+     +---------+     +---------+</pre>
+        <p>
+          こんな感じで <code>func4</code> だけ非同期になれば楽なんですが、呼び出し元には依存関係があるので、実際には全て非同期関数になる。
+        </p>
+        <pre>
++---------+     +---------+     +---------+     +---------+
+| *func1  |     | *func2  |     | *func3  |     | *func4  |
+| (async) | --> | (async) | --> | (async) | --> | (async) |
++---------+     +---------+     +---------+     +---------+</pre>
+        <p>
+          この例では <code>func4</code> の変更で三つの関数の修正が発生しているが、実際には <code>func4</code> を間接的にでも使っている関数の全ての修正が発生する。かなり大変。
+        </p>
+        <p>
+          実際にはコールバックや <code>ES6 Promise</code> に対応させることになるが、これがかなり大変。
+        </p>
+        <pre><code class="javascript">// 同期版
+function func3() {
+  try {
+    return func4();
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return;
+    }
+    throw error;
+  }
+}</code></pre>
+        <p>
+          コールバックに書き換えるにはすごく大変。絶対にバグるレベル。
+        </p>
+        <pre><code class="javascript">// コールバックに書き換える
+function func3(callback) {
+  func4(error => {
+    if (error && error.code !== 'ENOENT') {
+      callback(error);
+    } else {
+      callback();
+    }
+  });
+}</code></pre>
+        <p>
+          <code>ES6 Promise</code> に書き換えるのはコールバックよりは若干マシ。やっぱりバグると思う。
+        </p>
+        <pre><code class="javascript">// ES6 Promise に書き換える
+function func3() {
+  return func4()
+    .catch(error => {
+      if (error.code === 'ENOENT') {
+        return;
+      }
+      throw error;
+    });
+}</code></pre>
+        <p>
+          <code>async</code> に書き換えるのは、キーワードを少し追加するだけなのでかなり楽。
+        </p>
+        <pre><code class="javascript">// async 版
+async function func3() {
+  try {
+    return await func4();
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return;
+    }
+    throw error;
+  }
+}</code></pre>
+        <p>
+          <a href="https://tc39.github.io/ecmascript-asyncawait/">Async Functions</a> を使うと、非同期処理が楽に書けるだけでなく、同期から非同期への変更のインパクトをかなり抑えられる。
+        </p>
+        <p>
+          とはいえ、自分が所有していないコードまで影響範囲が広がるとおおごとになるので、同期から非同期の変更はかなり難しい。アプリケーションの開発者はそれほどでもないが、ライブラリ開発者にとってはかなり大きな問題。関数を作るときにそれを同期関数にするか非同期関数にするかは非常に悩ましい。これは Async Functions が入っても解決できない。
+        </p>
+      </article>
+    </section>
+
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

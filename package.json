@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "async/await Samples",
   "scripts": {
-    "start": "browser-sync start --server --browser=\"google chrome beta\" --files=\"**/*.html\" --files=\"**/*.css\" --files=\"**/*.js\""
+    "start": "browser-sync start --server --files=\"**/*.html\" --files=\"**/*.css\" --files=\"**/*.js\""
   },
   "repository": {
     "type": "git",

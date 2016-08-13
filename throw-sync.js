@@ -14,5 +14,4 @@
   }
 
   $(document).on('click', '#throw-sync', catchError);
-
 })();
