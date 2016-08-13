@@ -1,0 +1,26 @@
+{
+  "name": "async-samples",
+  "version": "1.0.0",
+  "description": "async/await Samples",
+  "scripts": {
+    "start": "browser-sync start --server --browser=\"google chrome beta\" --files=\"**/*.html\" --files=\"**/*.css\" --files=\"**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masakura/async-samples.git"
+  },
+  "keywords": [
+    "async",
+    "es6",
+    "es2017"
+  ],
+  "author": "Tomo Masakura <tomo.masakura@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/masakura/async-samples/issues"
+  },
+  "homepage": "https://github.com/masakura/async-samples#readme",
+  "devDependencies": {
+    "browser-sync": "^2.14.0"
+  }
+}

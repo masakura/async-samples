@@ -5,10 +5,40 @@
     <title>Document</title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/default.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <section class="content">
-      <artcicle id="article-sync">
+    <section class="description block">
+      <h2>Async Functions のサンプルの説明</h3>
+      <article>
+        <h3>Async Functions</h4>
+        <p>
+          <a href="https://tc39.github.io/ecmascript-asyncawait/">Async Functions</a> はおそらく .NET Framework の async/await を ECMAScript に移植したもの。非同期処理を同期処理とほとんど変わらない見た目で書くことができ、非同期の可読性を向上させる非常に有用なもの。
+        </p>
+        <p>
+          現在、Stage 4 に移行し、来年 6 月に発表される ECMAScript 2017 に採用されるはず。
+        </p>
+        <p>
+          [ECMAScript 6 compatibility table](http://kangax.github.io/compat-table/es6/) の [async functions](http://kangax.github.io/compat-table/es2016plus/#test-async_functions) によると使える環境は以下の通り。
+        </p>
+        <ul>
+          <li>Edge 14 (Anniversary Update)</li>
+          <li>Google Chrome 53 (現状 Beta)</li>
+          <li>Traceur/Babel/TypeScript</li>
+        </ul>
+        <h3>使い方</h3>
+        <p>
+          2016/8/13 時点では Google Chrome Beta をオプション付きで起動する必要があります。
+        </p>
+        <pre id="open-chrome-beta">$ google-chrome-beta --js-flags="--harmony-async-await"</pre>
+        <p>
+          起動したら DevTools でコンソールを表示してください。動作結果は全てコンソールに出力されます。
+        </p>
+      </article>
+    </section>
+    <section class="content block">
+      <h2>同期から非同期へ</h2>
+      <article id="article-sync">
         <h3>同期</h3>
         <p>
           <button id="sync" type="button" class="btn btn-default">実行</button>
@@ -173,5 +203,9 @@ async function start() {
     <script src="promise.js"></script>
     <script src="async.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+    <script>
+      $('#open-chrome-beta').text(`$ google-chrome-beta --js-flags="--harmony-async-await" ${location}`)
+    </script>
   </body>
 </html>

@@ -1,0 +1,20 @@
+.block {
+  border: solid #aaa 1px;
+  margin: 1rem;
+}
+
+.block h2 {
+  margin-top: 0;
+}
+
+article {
+  padding: 1rem;
+}
+
+article h3 {
+  margin-top: 0;
+}
+
+article:nth-child(even) {
+  background-color: #f7f7f7;
+}
